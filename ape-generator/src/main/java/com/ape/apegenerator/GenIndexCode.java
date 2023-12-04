@@ -58,7 +58,7 @@ public class GenIndexCode {
             }
         }
         builder.append("                <el-col :xs=\"24\" :sm=\"12\" :md=\"8\" :lg=\"8\" :xl=\"8\">\n" +
-                "                    <el-button style=\"margin-top:10px\" size=\"mini\" icon=\"el-icon-search\" type=\"primary\" @click=\"query\">查询</el-button>\n" +
+                "                    <el-button style=\"margin-top:10px\" size=\"mini\" icon=\"el-icon-search\" type=\"primary\" @click=\"searchPage\">查询</el-button>\n" +
                 "                    <el-button style=\"margin-top:10px\" size=\"mini\" icon=\"el-icon-refresh\" @click=\"refresh\">重置</el-button>\n" +
                 "                </el-col>\n");
         builder.append("            </el-row>\n" +
@@ -160,8 +160,11 @@ public class GenIndexCode {
                 "    },\n");
         builder.append("    components: {\n" + "      add").append(",\n").append("      update").append("\n").append("    },\n");
         builder.append("    methods: {\n");
-        builder.append("      query() {\n" +
-                "        this.search.pageNumber = 1\n");
+        builder.append("        searchPage() {\n" +
+                "            this.search.pageNumber = 1\n" +
+                "            this.query()\n" +
+                "        },\n");
+        builder.append("      query() {\n");
         for (ApeGenTableColumn apeGenTableColumn : columnList) {
             String sm = HumpUtils.toSmallCamel(apeGenTableColumn.getJavaField(), "_");
             if ("Date".equals(apeGenTableColumn.getJavaType())) {
@@ -213,6 +216,7 @@ public class GenIndexCode {
                 "        this.query()\n" +
                 "      },\n" +
                 "      updateFalse() {\n" +
+                "        this.updateId = ''\n" +
                 "        this.updateVisible = false\n" +
                 "        this.query()\n" +
                 "      },\n" +

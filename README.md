@@ -1,9 +1,7 @@
-# back_stage_server
+# 基于springboot+vue的网上点餐系统
 
 #### 介绍
-自用后台管理系统后端
-用户名：admin
-密码：admin
+基于springboot+vue的网上点餐系统
 
 #### 软件架构
 软件架构说明

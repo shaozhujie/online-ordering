@@ -8,6 +8,6 @@
                DATA_TYPE as `type`,COLUMN_TYPE as `column`,COLUMN_KEY as `key`
         from
              information_schema.columns
-        where table_name = #{table}
+        where table_name = #{table} AND TABLE_SCHEMA = 'ape-order-online'
     </select>
 </mapper>

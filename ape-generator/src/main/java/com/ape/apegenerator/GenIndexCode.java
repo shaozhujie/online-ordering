@@ -225,9 +225,9 @@ public class GenIndexCode {
                 "        this.updateVisible = true\n" +
                 "      },\n" +
                 "      updateDataBtn() {\n" +
-                "        this.update(this.update[0])\n" +
+                "        this.updateData(this.update[0])\n" +
                 "      },\n" +
-                "      deleteDateBtn() {\n" +
+                "      deleteDataBtn() {\n" +
                 "        this.$confirm('确定删除选中的'+ this.remove.length +'条数据?', '提示', {\n" +
                 "          confirmButtonText: '确定',\n" +
                 "          cancelButtonText: '取消',\n" +

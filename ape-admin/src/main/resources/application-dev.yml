@@ -1,12 +1,15 @@
 # 数据源配置
 spring:
+  mail:
+    password: nwavnzopbtpibchc
+    username: 1760272627@qq.com
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
     druid:
       # 主库数据源
       master:
-        url: jdbc:mysql://localhost:3306/ape?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+        url: jdbc:mysql://localhost:3306/ape-order-online?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
         username: root
         password: 123456
       # 从库数据源
@@ -47,7 +50,7 @@ spring:
         allow:
         url-pattern: /druid/*
         # 控制台管理用户名和密码
-        login-username: ruoyi
+        login-username: ape
         login-password: 123456
       filter:
         stat:

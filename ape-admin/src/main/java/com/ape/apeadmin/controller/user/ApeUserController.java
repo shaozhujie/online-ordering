@@ -6,11 +6,10 @@ import com.ape.apecommon.domain.Result;
 import com.ape.apecommon.enums.BusinessType;
 import com.ape.apecommon.enums.ResultCode;
 import com.ape.apecommon.utils.PasswordUtils;
+import com.ape.apeframework.utils.RedisUtils;
 import com.ape.apeframework.utils.ShiroUtils;
-import com.ape.apesystem.domain.ApeUser;
-import com.ape.apesystem.domain.ApeUserRole;
-import com.ape.apesystem.service.ApeUserRoleService;
-import com.ape.apesystem.service.ApeUserService;
+import com.ape.apesystem.domain.*;
+import com.ape.apesystem.service.*;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -42,6 +41,14 @@ public class ApeUserController {
     private ApeUserService apeUserService;
     @Autowired
     private ApeUserRoleService apeUserRoleService;
+    @Autowired
+    private RedisUtils redisUtils;
+    @Autowired
+    private ApeFoodService apeFoodService;
+    @Autowired
+    private ApeCollectionService apeCollectionService;
+    @Autowired
+    private ApeOrderService apeOrderService;
 
     /** 分页查询用户 */
     @Log(name = "分页查询用户", type = BusinessType.OTHER)
@@ -84,7 +91,7 @@ public class ApeUserController {
         apeUser.setId(uuid);
         apeUser.setPassword(split[0]);
         apeUser.setSalt(split[1]);
-        apeUser.setAvatar("/img/avatar.jpg");
+        apeUser.setAvatar("/img/avatar.jpeg");
         apeUser.setPwdUpdateDate(new Date());
         //保存用户
         boolean save = apeUserService.save(apeUser);
@@ -153,10 +160,25 @@ public class ApeUserController {
         if (StringUtils.isNotBlank(ids)) {
             String[] asList = ids.split(",");
             for (String id : asList) {
+                ApeUser user = apeUserService.getById(id);
                 boolean remove = apeUserService.removeById(id);
                 QueryWrapper<ApeUserRole> queryWrapper = new QueryWrapper<>();
                 queryWrapper.lambda().eq(ApeUserRole::getUserId,id);
                 apeUserRoleService.remove(queryWrapper);
+                if (user.getUserType() == 1) {
+                    //删除美食
+                    QueryWrapper<ApeFood> queryWrapper1 = new QueryWrapper<>();
+                    queryWrapper1.lambda().eq(ApeFood::getShopId,user.getId());
+                    apeFoodService.remove(queryWrapper1);
+                    //删除收藏
+                    QueryWrapper<ApeCollection> queryWrapper2 = new QueryWrapper<>();
+                    queryWrapper2.lambda().eq(ApeCollection::getShopId,user.getId());
+                    apeCollectionService.remove(queryWrapper2);
+                    //删除订单
+                    QueryWrapper<ApeOrder> queryWrapper3 = new QueryWrapper<>();
+                    queryWrapper3.lambda().eq(ApeOrder::getShopId,user.getId());
+                    apeOrderService.remove(queryWrapper3);
+                }
             }
             return Result.success();
         } else {
@@ -250,6 +272,74 @@ public class ApeUserController {
             }
         } else {
             return Result.fail("请选择正确的图片格式");
+        }
+    }
+
+    @GetMapping("/getUserListByType")
+    public Result getUserListByType(@RequestParam("type") String type) {
+        QueryWrapper<ApeUser> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(ApeUser::getUserType,type).eq(ApeUser::getStatus,0);
+        List<ApeUser> userList = apeUserService.list(queryWrapper);
+        return Result.success(userList);
+    }
+
+    @GetMapping("checkUser")
+    public Result checkUser() {
+        ApeUser userInfo = ShiroUtils.getUserInfo();
+        ApeUser user = apeUserService.getById(userInfo.getId());
+        if (StringUtils.isBlank(user.getProvince()) || StringUtils.isBlank(user.getCity())) {
+            return Result.success();
+        } else {
+            return Result.fail();
+        }
+    }
+
+    @GetMapping("getShopFour")
+    public Result getShopFour() {
+        ApeUser user = ShiroUtils.getUserInfo();
+        QueryWrapper<ApeUser> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(ApeUser::getCity,user.getCity()).eq(ApeUser::getUserType,1)
+                .eq(ApeUser::getStatus,0).orderByDesc(ApeUser::getCreateTime).last("limit 4");
+        List<ApeUser> userList = apeUserService.list(queryWrapper);
+        return Result.success(userList);
+    }
+
+    @PostMapping("forgetPassword")
+    public Result forgetPassword(@RequestBody JSONObject jsonObject) {
+        String loginAccount = jsonObject.getString("loginAccount");
+        String email = jsonObject.getString("email");
+        String password = jsonObject.getString("password");
+        String code = jsonObject.getString("code").toLowerCase();
+        String s = redisUtils.get(email + "forget");
+        if (!code.equals(s)) {
+            return Result.fail("验证码错误");
+        }
+        QueryWrapper<ApeUser> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(ApeUser::getLoginAccount,loginAccount).last("limit 1");
+        ApeUser user = apeUserService.getOne(queryWrapper);
+        //密码加盐加密
+        String encrypt = PasswordUtils.encrypt(password);
+        String[] split = encrypt.split("\\$");
+        user.setPassword(split[0]);
+        user.setSalt(split[1]);
+        boolean update = apeUserService.updateById(user);
+        if (update) {
+            return Result.success();
+        } else {
+            return Result.fail("密码修改失败");
+        }
+    }
+
+    @GetMapping("changeOpen")
+    public Result changeOpen(@RequestParam("open")Integer open) {
+        ApeUser user = ShiroUtils.getUserInfo();
+        ApeUser apeUser = apeUserService.getById(user.getId());
+        apeUser.setOpen(open);
+        boolean update = apeUserService.updateById(apeUser);
+        if (update) {
+            return Result.success();
+        } else {
+            return Result.fail("操作失败");
         }
     }
 

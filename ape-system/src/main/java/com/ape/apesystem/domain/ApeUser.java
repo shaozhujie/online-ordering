@@ -122,6 +122,28 @@ public class ApeUser extends BaseEntity {
     @TableLogic
     private Integer delFlag;
 
+    private String coverImg;
+
+    private String name;
+
+    private Float star;
+
+    private String openTime;
+
+    private String address;
+
+    private String average;
+
+    private String province;
+
+    private String city;
+
+    private String business;
+
+    private String introduce;
+
+    private Integer open;
+
     private String remark;
 
     @TableField(exist = false)

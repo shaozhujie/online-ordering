@@ -1,7 +1,11 @@
-# 基于springboot+vue的网上点餐系统
+# 基于spring-boot+vue的网上点餐系统的设计与实现
 
 #### 介绍
-基于springboot+vue的网上点餐系统
+基于spring-boot+vue的网上点餐系统的设计与实现
+包含美食、商家、下单、美食评论、美食资讯、用户点评、店铺收藏、地址管理、个人中心、我的订单、后台管理等功能。
+系统分为三个角色：管理员、商家、用户
+采用技术：SpringBoot，shiro，Mybatis-plus，Vue，redis，mysql，ElementUi，echarts
+工具：idea，vscode，navicat
 
 #### 软件架构
 软件架构说明

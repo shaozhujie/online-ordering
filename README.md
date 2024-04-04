@@ -1,41 +1,32 @@
-# 基于spring-boot+vue的网上点餐系统的设计与实现
+# online-ordering基于spring-boot+vue的网上点餐系统的设计与实现
 
-#### 介绍
-基于spring-boot+vue的网上点餐系统的设计与实现
-包含美食、商家、下单、美食评论、美食资讯、用户点评、店铺收藏、地址管理、个人中心、我的订单、后台管理等功能。
-系统分为三个角色：管理员、商家、用户
-采用技术：SpringBoot，shiro，Mybatis-plus，Vue，redis，mysql，ElementUi，echarts
-工具：idea，vscode，navicat
+**有问题可以咨询企鹅Q1760272627** 
 
-#### 软件架构
-软件架构说明
+### 功能：
+用户：登录、注册、忘记密码、首页、美食、美食下单、商家、咨询、点评、留言、关于、个人中心、外送地址、我的订单、收藏店铺、写点评、我的点评、退出登录
 
+商家：登录、商家入驻、商家首页、商家美食管理、商家订单管理、个人中心
 
-#### 安装教程
+管理员：登录、首页、省份管理、城市管理、商圈管理、类型管理、标签管理、咨询管理、点评管理、留言管理、美食管理、订单管理、用户管理、商家管理、个人中心
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+### 采用技术：
+SpringBoot，shiro，Mybatis-plus，Vue，redis，mysql，ElementUi，echarts
 
-#### 使用说明
+### 工具：
+idea，vscode，navicat
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+### 系统截图：
+![登录](img/image.png)
+![首页](img/image1.png)
+![美食](img/image2.png)
+![美食详情](img/image3.png)
+![商家](img/image4.png)
+![商家详情](img/image5.png)
+![资讯](img/image6.png)
+![点评](img/image7.png)
+![留言](img/image8.png)
+![个人中心](img/image9.png)
+![写点评](img/image10.png)
+![后台管理](img/image11.png)
 
-#### 参与贡献
-
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
-
-
-#### 特技
-
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+**有问题可以咨询企鹅Q1760272627** 

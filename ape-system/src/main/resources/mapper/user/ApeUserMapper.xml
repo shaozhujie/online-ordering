@@ -39,4 +39,37 @@
             and u.del_flag = 0 order by u.create_time desc
         </where>
     </select>
+    <select id="getUserSalePage" resultType="map">
+        select sum(price) as price,u.user_name as userName,u.login_account as loginAccount from ape_order o left join ape_user u
+        on o.user_id = u.id
+        <where>
+            1=1
+            <if test="userName != null">
+                and u.user_name like concat('%',#{userName},'%')
+            </if>
+            <if test="id != null">
+                and o.shop_id = #{id}
+            </if>
+        </where>
+        group by o.user_id order by price
+    </select>
+    <select id="getUserDianCaiPage" resultType="map">
+        select o.user_id as userId,u.login_account as loginAccount,u.user_name as userName from ape_order o left join ape_user u
+        on o.user_id = u.id
+        <where>
+            1=1
+            <if test="userName != null">
+                and u.user_name like concat('%',#{userName},'%')
+            </if>
+            <if test="id != null">
+                and o.shop_id = #{id}
+            </if>
+        </where>
+        group by o.user_id
+    </select>
+    <select id="getMaxFood" resultType="map">
+        select max(o.num) as maxNum,ANY_VALUE(o.foodName) as foodName from
+        (select count(*) as num,ANY_VALUE(food_name) as foodName from ape_order where user_id = #{userId}
+        group by food_id) o
+    </select>
 </mapper>

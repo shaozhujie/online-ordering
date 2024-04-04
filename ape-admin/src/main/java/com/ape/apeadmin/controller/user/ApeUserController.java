@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author shaozhujie
@@ -55,6 +56,67 @@ public class ApeUserController {
     @PostMapping("getUserPage")
     public Result getUserPage(@RequestBody ApeUser apeUser) {
         Page<ApeUser> page = apeUserService.getUserPage(apeUser);
+        return Result.success(page);
+    }
+
+    @PostMapping("getUserSalePage")
+    public Result getUserSalePage(@RequestBody JSONObject jsonObject) {
+        ApeUser user = ShiroUtils.getUserInfo();
+        if (user.getUserType() == 1) {
+            jsonObject.put("id",user.getId());
+        }
+        Page<Map<String,Object>> page = apeUserService.getUserSalePage(jsonObject);
+        return Result.success(page);
+    }
+
+    @PostMapping("getUserDianCaiPage")
+    public Result getUserDianCaiPage(@RequestBody JSONObject jsonObject) {
+        ApeUser user = ShiroUtils.getUserInfo();
+        if (user.getUserType() == 1) {
+            jsonObject.put("id",user.getId());
+        }
+        Page<Map<String,Object>> page = apeUserService.getUserDianCaiPage(jsonObject);
+        for (Map<String,Object> map : page.getRecords()) {
+            String userId = map.get("userId").toString();
+            //点了多少个菜
+            QueryWrapper<ApeOrder> queryWrapper = new QueryWrapper<>();
+            queryWrapper.lambda().eq(ApeOrder::getUserId,userId);
+            int count = apeOrderService.count(queryWrapper);
+            map.put("count",count);
+            //消费多少金额
+            QueryWrapper<ApeOrder> queryWrapper1 = new QueryWrapper<>();
+            queryWrapper1.select("sum(price) as price").lambda().eq(ApeOrder::getUserId,userId);
+            Map<String, Object> objectMap = apeOrderService.getMap(queryWrapper1);
+            if (objectMap == null) {
+                map.put("price",0);
+            } else {
+                Object price = objectMap.get("price");
+                if (price == null) {
+                    map.put("price",0);
+                } else {
+                    map.put("price",price);
+                }
+            }
+            //点的最多的菜
+            Map<String, Object> maxFood = apeUserService.getMaxFood(userId);
+            if (maxFood == null) {
+                map.put("max",0);
+                map.put("foodName","");
+            } else {
+                Object maxNum = maxFood.get("maxNum");
+                if (maxNum == null) {
+                    map.put("max",0);
+                } else {
+                    map.put("max",maxNum);
+                }
+                Object foodName = maxFood.get("foodName");
+                if (foodName == null) {
+                    map.put("foodName",0);
+                } else {
+                    map.put("foodName",foodName);
+                }
+            }
+        }
         return Result.success(page);
     }
 

@@ -1,5 +1,6 @@
 package com.ape.apeadmin.controller.food;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.ape.apecommon.annotation.Log;
 import com.ape.apecommon.domain.Result;
 import com.ape.apecommon.enums.BusinessType;
@@ -22,7 +23,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * @author 超级管理员
@@ -186,6 +188,86 @@ public class ApeFoodController {
                 .eq(ApeFood::getState,0).last("limit 4");
         List<ApeFood> foodList = apeFoodService.list(queryWrapper);
         return Result.success(foodList);
+    }
+
+    @PostMapping("getSale")
+    public Result getSale(@RequestBody JSONObject jsonObject) {
+        String id = jsonObject.getString("id");
+        Date startTime = jsonObject.getDate("startTime");
+        Date endTime = jsonObject.getDate("endTime");
+        // 获取两个日期之间的所有日期
+        List<Date> dateList = getDatesBetween(startTime, endTime);
+        List<String> dates = new ArrayList<>();
+        List<Object> countList = new ArrayList<>();
+        List<Object> priceList = new ArrayList<>();
+        // 打印结果
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        for (Date date : dateList) {
+            dates.add(sdf.format(date));
+            QueryWrapper<ApeOrder> queryWrapper = new QueryWrapper<>();
+            queryWrapper.select("sum(num) as num").lambda().eq(ApeOrder::getFoodId,id)
+                    .ge(ApeOrder::getCreateTime,sdf.format(date) + " 00:00:00")
+                    .le(ApeOrder::getCreateTime,sdf.format(date) + " 23:59:59");
+            //获取销量
+            Map<String, Object> map = apeOrderService.getMap(queryWrapper);
+            if (map == null) {
+                countList.add(0);
+            } else {
+                Object num = map.get("num");
+                if (num == null) {
+                    countList.add(0);
+                } else {
+                    countList.add(num);
+                }
+            }
+            //获取金额
+            QueryWrapper<ApeOrder> queryWrapper1 = new QueryWrapper<>();
+            queryWrapper1.select("sum(price) as price").lambda()
+                    .eq(ApeOrder::getFoodId,id)
+                    .ge(ApeOrder::getCreateTime,sdf.format(date) + " 00:00:00")
+                    .le(ApeOrder::getCreateTime,sdf.format(date) + " 23:59:59");
+            Map<String, Object> objectMap = apeOrderService.getMap(queryWrapper1);
+            if (objectMap == null) {
+                priceList.add(0);
+            } else {
+                Object price = objectMap.get("price");
+                if (price == null) {
+                    priceList.add(0);
+                } else {
+                    priceList.add(price);
+                }
+            }
+        }
+        //获取总金额
+        QueryWrapper<ApeOrder> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("sum(price) as price").lambda().eq(ApeOrder::getFoodId,id)
+                .ge(ApeOrder::getCreateTime,startTime)
+                .le(ApeOrder::getCreateTime,endTime);
+        //获取销量
+        Map<String, Object> objectMap = apeOrderService.getMap(queryWrapper);
+        Object price = 0;
+        if (objectMap != null) {
+            if (objectMap.get("price") != null) {
+                price = objectMap.get("price");
+            }
+        }
+        JSONObject json = new JSONObject();
+        json.put("countList",countList);
+        json.put("priceList",priceList);
+        json.put("price",price);
+        json.put("dateList",dates);
+        return Result.success(json);
+    }
+
+    public static List<Date> getDatesBetween(Date startDate, Date endDate) {
+        List<Date> dates = new ArrayList<>();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(startDate);
+        while (!cal.getTime().after(endDate)) {
+            dates.add(cal.getTime());
+            cal.add(Calendar.DATE, 1);
+        }
+        return dates;
     }
 
 }

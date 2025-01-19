@@ -1,6 +1,6 @@
 # online-ordering基于spring-boot+vue的网上点餐系统的设计与实现
 
-**有问题或者获取源码可以咨询企鹅Q1760272627** 
+**有问题或者获取源码可以咨询QQ1760272627** 
 
 **系统运行视频：**
 https://www.bilibili.com/video/BV14i4y1B7tJ/?vd_source=5f273f72fd3dc593e25c33cbccdad12e
@@ -18,18 +18,4 @@ SpringBoot，shiro，Mybatis-plus，Vue，redis，mysql，ElementUi，echarts
 ### 工具：
 idea，vscode，navicat
 
-### 系统截图：
-![登录](img/image.png)
-![首页](img/image1.png)
-![美食](img/image2.png)
-![美食详情](img/image3.png)
-![商家](img/image4.png)
-![商家详情](img/image5.png)
-![资讯](img/image6.png)
-![点评](img/image7.png)
-![留言](img/image8.png)
-![个人中心](img/image9.png)
-![写点评](img/image10.png)
-![后台管理](img/image11.png)
-
-**有问题或者获取源码可以咨询企鹅Q1760272627** 
+**有问题或者获取源码可以咨询QQ1760272627** 
